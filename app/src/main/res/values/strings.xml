@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Phearch</string>
+
+    <string name="pixabay_api_key">YOUR_API_KEY</string>
+
+    <string name="title_search">Search</string>
+    <string name="title_switch_layout">Switch</string>
+
+    <string name="no_result">No result</string>
+    <string name="no_more_image">No more image</string>
+    <string name="failed_to_search_image">Failed to search image</string>
+</resources>
