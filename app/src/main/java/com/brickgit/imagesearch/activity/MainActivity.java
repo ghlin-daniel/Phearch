@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             showProgressBar(true);
             adapter.clear();
 
+            noMoreImage = false;
             request = QueryRequest.getNewRequest(query);
             searchImages();
 
