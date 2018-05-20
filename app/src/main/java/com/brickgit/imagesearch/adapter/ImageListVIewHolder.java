@@ -21,11 +21,6 @@ public class ImageListVIewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.root) View rootView;
     @BindView(R.id.image) ImageView imageView;
-
-    @BindView(R.id.avatar) CircleImageView avatarView;
-    @BindView(R.id.user_name) TextView nameView;
-    @BindView(R.id.tags) TextView tags;
-
     @BindView(R.id.likes) TextView likes;
     @BindView(R.id.favorites) TextView favorites;
     @BindView(R.id.views) TextView views;
@@ -44,10 +39,6 @@ public class ImageListVIewHolder extends RecyclerView.ViewHolder {
         rootView.setTag(imageInfo);
 
         ImageUtil.loadImage(context, imageView, imageInfo.getWebformatURL());
-        ImageUtil.loadImage(context, avatarView, imageInfo.getUserImageURL());
-        nameView.setText(imageInfo.getUser());
-
-        tags.setText(imageInfo.getTags());
 
         likes.setText(String.valueOf(imageInfo.getLikes()));
         favorites.setText(String.valueOf(imageInfo.getFavorites()));
