@@ -5,10 +5,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.model.ImageInfoResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,13 +70,17 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == VIEW_TYPE_GRID_CELL) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_grid_view_holder, null);
+            View view = LayoutInflater
+		            .from(parent.getContext())
+		            .inflate(R.layout.image_grid_view_holder, null);
             view.setOnClickListener(onClickListener);
             ImageGridViewHolder viewHolder = new ImageGridViewHolder(parent.getContext(), view);
             return viewHolder;
         }
         else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_list_view_holder, null);
+            View view = LayoutInflater
+		            .from(parent.getContext())
+		            .inflate(R.layout.image_list_view_holder, null);
             view.setOnClickListener(onClickListener);
             ImageListVIewHolder viewHolder = new ImageListVIewHolder(parent.getContext(), view);
             return viewHolder;

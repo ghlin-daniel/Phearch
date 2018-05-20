@@ -7,7 +7,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.brickgit.imagesearch.BuildConfig;
-import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.model.QueryRequest;
 import com.brickgit.imagesearch.model.QueryResponse;
 import com.brickgit.imagesearch.util.NetworkUtil;
@@ -23,12 +22,17 @@ public class QueryApi {
         void onErrorResponse(QueryRequest request, String error);
     }
 
-    public static void searchImage(Context context, final QueryRequest request, final ApiCallback apiCallback) {
+    public static void searchImage(
+    		Context context, final QueryRequest request, final ApiCallback apiCallback) {
 
         final String apiKey = BuildConfig.PixabayApiKey;
 
         String formattedQuery = request.getQuery().replace(" ", "+");
-        String url = "https://pixabay.com/api/?key=" + apiKey + "&q=" + formattedQuery + "&image_type=all" + "&page=" + request.getPage();
+        String url =
+		        "https://pixabay.com/api/?key=" + apiKey +
+		        "&q=" + formattedQuery +
+		        "&image_type=all" +
+		        "&page=" + request.getPage();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -46,7 +50,8 @@ public class QueryApi {
         	        @Override
 	                public void onErrorResponse(VolleyError error) {
         	        	if (apiCallback != null) {
-        	        		apiCallback.onErrorResponse(request, new String(error.networkResponse.data));
+        	        		apiCallback.onErrorResponse(
+        	        				request, new String(error.networkResponse.data));
         	        	}
         	        }
                 });

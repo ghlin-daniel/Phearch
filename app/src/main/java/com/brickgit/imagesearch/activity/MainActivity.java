@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
-
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.adapter.ImageAdapter;
 import com.brickgit.imagesearch.adapter.SpaceItemDecoration;
@@ -21,7 +20,6 @@ import com.brickgit.imagesearch.api.QueryApi;
 import com.brickgit.imagesearch.model.ImageInfoResponse;
 import com.brickgit.imagesearch.model.QueryRequest;
 import com.brickgit.imagesearch.model.QueryResponse;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

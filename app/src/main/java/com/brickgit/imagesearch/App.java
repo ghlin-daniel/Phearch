@@ -1,7 +1,6 @@
 package com.brickgit.imagesearch;
 
 import android.app.Application;
-
 import com.brickgit.imagesearch.util.NetworkUtil;
 
 /**
@@ -11,7 +10,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         NetworkUtil.getInstance(this);
     }
 }

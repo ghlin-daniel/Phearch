@@ -1,7 +1,6 @@
 package com.brickgit.imagesearch.util;
 
 import android.content.Context;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -12,7 +11,6 @@ import com.android.volley.toolbox.Volley;
 public class NetworkUtil {
 
     private static NetworkUtil instance;
-    private Context context;
 
     private RequestQueue requestQueue;
 
@@ -24,8 +22,7 @@ public class NetworkUtil {
     }
 
     private NetworkUtil(Context context) {
-        this.context = context.getApplicationContext();
-        requestQueue = Volley.newRequestQueue(this.context);
+        requestQueue = Volley.newRequestQueue(context.getApplicationContext());
     }
 
     public <T> void addToRequestQueue(Request<T> req) {

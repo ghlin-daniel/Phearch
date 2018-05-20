@@ -5,11 +5,9 @@ import android.support.percent.PercentRelativeLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.model.ImageInfoResponse;
 import com.brickgit.imagesearch.util.ImageUtil;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
