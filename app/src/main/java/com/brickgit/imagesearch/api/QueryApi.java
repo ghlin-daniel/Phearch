@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.brickgit.imagesearch.BuildConfig;
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.model.QueryRequest;
 import com.brickgit.imagesearch.model.QueryResponse;
@@ -24,7 +25,7 @@ public class QueryApi {
 
     public static void searchImage(Context context, final QueryRequest request, final ApiCallback apiCallback) {
 
-        String apiKey = context.getString(R.string.pixabay_api_key);
+        final String apiKey = BuildConfig.PixabayApiKey;
 
         String formattedQuery = request.getQuery().replace(" ", "+");
         String url = "https://pixabay.com/api/?key=" + apiKey + "&q=" + formattedQuery + "&image_type=all" + "&page=" + request.getPage();
@@ -33,7 +34,6 @@ public class QueryApi {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                         Gson gson = new Gson();
                         QueryResponse queryResponse = gson.fromJson(response, QueryResponse.class);
 
@@ -41,14 +41,15 @@ public class QueryApi {
                             apiCallback.onResponse(request, queryResponse);
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (apiCallback != null) {
-                    apiCallback.onErrorResponse(request, new String(error.networkResponse.data));
-                }
-            }
-        });
+                },
+		        new Response.ErrorListener() {
+        	        @Override
+	                public void onErrorResponse(VolleyError error) {
+        	        	if (apiCallback != null) {
+        	        		apiCallback.onErrorResponse(request, new String(error.networkResponse.data));
+        	        	}
+        	        }
+                });
 
         NetworkUtil.getInstance(context).addToRequestQueue(stringRequest);
     }
