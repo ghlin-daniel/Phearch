@@ -32,13 +32,13 @@ public class ImageGridViewHolder extends RecyclerView.ViewHolder {
 
         rootView.setTag(imageInfo);
 
-        float imageWidth = imageInfo.getWebformatWidth();
-        float imageHeight = imageInfo.getWebformatHeight();
+        float imageWidth = imageInfo.getPreviewWidth();
+        float imageHeight = imageInfo.getPreviewHeight();
 
         PercentRelativeLayout.LayoutParams layoutParams = (PercentRelativeLayout.LayoutParams) imageView.getLayoutParams();
         layoutParams.getPercentLayoutInfo().aspectRatio = imageWidth / imageHeight;
         imageView.setLayoutParams(layoutParams);
 
-        ImageUtil.loadImage(context, imageView, imageInfo.getWebformatURL());
+        ImageUtil.loadImage(context, imageView, imageInfo.getPreviewURL());
     }
 }
