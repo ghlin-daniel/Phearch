@@ -10,7 +10,6 @@ import com.brickgit.imagesearch.model.ImageInfoResponse;
 import com.brickgit.imagesearch.util.ImageUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Daniel Lin on 7/2/16.
@@ -40,10 +39,10 @@ public class ImageListVIewHolder extends RecyclerView.ViewHolder {
 
         ImageUtil.loadImage(context, imageView, imageInfo.getWebformatURL());
 
-        likes.setText(String.valueOf(imageInfo.getLikes()));
-        favorites.setText(String.valueOf(imageInfo.getFavorites()));
-        views.setText(String.valueOf(imageInfo.getViews()));
-        downloads.setText(String.valueOf(imageInfo.getDownloads()));
-        comments.setText(String.valueOf(imageInfo.getComments()));
+        likes.setText(imageInfo.getLikes().getCount());
+        favorites.setText(imageInfo.getFavorites().getCount());
+        views.setText(imageInfo.getViews().getCount());
+        downloads.setText(imageInfo.getDownloads().getCount());
+        comments.setText(imageInfo.getComments().getCount());
     }
 }

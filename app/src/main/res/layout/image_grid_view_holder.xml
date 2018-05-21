@@ -5,7 +5,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-
     <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,6 +15,4 @@
             android:scaleType="centerCrop"
             app:layout_widthPercent="100%" />
     </android.support.percent.PercentRelativeLayout>
-
-
 </LinearLayout>

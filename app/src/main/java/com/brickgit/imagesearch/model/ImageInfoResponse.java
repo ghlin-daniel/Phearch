@@ -24,11 +24,11 @@ public class ImageInfoResponse {
     private int imageWidth;
     private int imageHeight;
 
-    private int views;
-    private int downloads;
-    private int favorites;
-    private int likes;
-    private int comments;
+    private Count views;
+    private Count downloads;
+    private Count favorites;
+    private Count likes;
+    private Count comments;
 
     @SerializedName("user_id")
     private int userId;
@@ -87,23 +87,23 @@ public class ImageInfoResponse {
         return imageHeight;
     }
 
-    public int getViews() {
+    public Count getViews() {
         return views;
     }
 
-    public int getDownloads() {
+    public Count getDownloads() {
         return downloads;
     }
 
-    public int getFavorites() {
+    public Count getFavorites() {
         return favorites;
     }
 
-    public int getLikes() {
+    public Count getLikes() {
         return likes;
     }
 
-    public int getComments() {
+    public Count getComments() {
         return comments;
     }
 

@@ -9,8 +9,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.brickgit.imagesearch.BuildConfig;
 import com.brickgit.imagesearch.model.QueryRequest;
 import com.brickgit.imagesearch.model.QueryResponse;
+import com.brickgit.imagesearch.model.ResponseParser;
 import com.brickgit.imagesearch.util.NetworkUtil;
-import com.google.gson.Gson;
 
 /**
  * Created by Daniel Lin on 7/1/16.
@@ -38,9 +38,8 @@ public class QueryApi {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Gson gson = new Gson();
-                        QueryResponse queryResponse = gson.fromJson(response, QueryResponse.class);
-
+	                    QueryResponse queryResponse =
+			                    ResponseParser.getInstance().parseResponse(response);
                         if (apiCallback != null) {
                             apiCallback.onResponse(request, queryResponse);
                         }
