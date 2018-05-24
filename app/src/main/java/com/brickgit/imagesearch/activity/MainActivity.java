@@ -6,13 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.adapter.ImageAdapter;
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem switchLayout = menu.findItem(R.id.switch_layout);
         switchLayout.setIcon(mode == Mode.GridMode ? R.drawable.ic_action_grid : R.drawable.ic_action_list);
 
-        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (android.support.v7.widget.SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setOnQueryTextListener(onQueryTextListener);
 
         return super.onCreateOptionsMenu(menu);

@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="5"
-            android:alpha="0.4"
+            android:alpha="0.3"
             android:background="@android:color/black"
             android:layout_alignParentBottom="true">
             <TextView
