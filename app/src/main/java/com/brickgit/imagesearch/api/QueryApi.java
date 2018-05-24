@@ -7,7 +7,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.brickgit.imagesearch.BuildConfig;
-import com.brickgit.imagesearch.model.QueryRequest;
 import com.brickgit.imagesearch.model.QueryResponse;
 import com.brickgit.imagesearch.model.ResponseParser;
 import com.brickgit.imagesearch.util.NetworkUtil;
@@ -18,21 +17,21 @@ import com.brickgit.imagesearch.util.NetworkUtil;
 public class QueryApi {
 
     public interface ApiCallback {
-        void onResponse(QueryRequest request, QueryResponse response);
-        void onErrorResponse(QueryRequest request, String error);
+        void onResponse(String query, QueryResponse response);
+        void onErrorResponse(String query, String error);
     }
 
     public static void searchImage(
-    		Context context, final QueryRequest request, final ApiCallback apiCallback) {
+    		Context context, final String query, final int page, final ApiCallback apiCallback) {
 
         final String apiKey = BuildConfig.PixabayApiKey;
 
-        String formattedQuery = request.getQuery().replace(" ", "+");
+        String formattedQuery = query.replace(" ", "+");
         String url =
 		        "https://pixabay.com/api/?key=" + apiKey +
 		        "&q=" + formattedQuery +
 		        "&image_type=all" +
-		        "&page=" + request.getPage();
+		        "&page=" + page;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -41,7 +40,7 @@ public class QueryApi {
 	                    QueryResponse queryResponse =
 			                    ResponseParser.getInstance().parseResponse(response);
                         if (apiCallback != null) {
-                            apiCallback.onResponse(request, queryResponse);
+                            apiCallback.onResponse(query, queryResponse);
                         }
                     }
                 },
@@ -50,7 +49,7 @@ public class QueryApi {
 	                public void onErrorResponse(VolleyError error) {
         	        	if (apiCallback != null) {
         	        		apiCallback.onErrorResponse(
-        	        				request, new String(error.networkResponse.data));
+					                query, new String(error.networkResponse.data));
         	        	}
         	        }
                 });

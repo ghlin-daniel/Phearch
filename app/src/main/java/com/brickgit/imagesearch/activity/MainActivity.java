@@ -1,8 +1,11 @@
 package com.brickgit.imagesearch.activity;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -16,10 +19,11 @@ import android.widget.Toast;
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.adapter.ImageAdapter;
 import com.brickgit.imagesearch.adapter.SpaceItemDecoration;
-import com.brickgit.imagesearch.api.QueryApi;
 import com.brickgit.imagesearch.model.ImageInfoResponse;
-import com.brickgit.imagesearch.model.QueryRequest;
-import com.brickgit.imagesearch.model.QueryResponse;
+import com.brickgit.imagesearch.model.MediaViewModel;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -30,11 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Mode mode = Mode.ListMode;
-
-    private boolean noMoreImage = false;
-    private boolean loading = false;
-    private QueryRequest request;
-
+    private MediaViewModel mViewModel;
     private SearchView searchView;
 
     @BindView(R.id.progress_bar) ProgressBar progressBar;
@@ -63,9 +63,7 @@ public class MainActivity extends AppCompatActivity {
             showProgressBar(true);
             adapter.clear();
 
-            noMoreImage = false;
-            request = QueryRequest.getNewRequest(query);
-            searchImages();
+	        mViewModel.queryPhotos(query);
 
             searchView.setQuery("", false);
             searchView.setIconified(true);
@@ -83,16 +81,13 @@ public class MainActivity extends AppCompatActivity {
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
 
-            if (loading || noMoreImage) return;
-
             int totalItemCount = layoutManager.getItemCount();
             int visibleItemCount = layoutManager.getChildCount();
             int[] firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null);
             int firstVisibleItemPosition = firstVisibleItemPositions[firstVisibleItemPositions.length - 1];
 
             if (firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
-                request.nextPage();
-                searchImages();
+	            mViewModel.loadMorePhotos();
             }
         }
     };
@@ -110,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.addItemDecoration(new SpaceItemDecoration());
         listView.addOnScrollListener(onScrollListener);
+
+	    mViewModel = ViewModelProviders.of(this).get(MediaViewModel.class);
+	    mViewModel.getPhotos().observe(this, new Observer<List<ImageInfoResponse>>() {
+		    @Override
+		    public void onChanged(@Nullable List<ImageInfoResponse> imageInfoResponses) {
+			    showProgressBar(false);
+			    adapter.update(imageInfoResponses);
+		    }
+	    });
     }
 
     @Override
@@ -139,48 +143,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void searchImages() {
-
-        if (request == null) return;
-
-        loading = true;
-
-        QueryApi.searchImage(this, request, new QueryApi.ApiCallback() {
-            @Override
-            public void onResponse(QueryRequest request, QueryResponse response) {
-                if (!request.equals(MainActivity.this.request)) return;
-
-                showProgressBar(false);
-
-                if (response.getHits().size() != 0) {
-                    adapter.add(response.getHits());
-                }
-                else {
-                    Toast.makeText(MainActivity.this, getString(R.string.no_result), Toast.LENGTH_LONG).show();
-                }
-
-                loading = false;
-            }
-
-            @Override
-            public void onErrorResponse(QueryRequest request, String error) {
-                if (!request.equals(MainActivity.this.request)) return;
-
-                showProgressBar(false);
-
-                if (error.contains("out of valid range")) {
-                    noMoreImage = true;
-                    Toast.makeText(MainActivity.this, getString(R.string.no_more_image), Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(MainActivity.this, getString(R.string.failed_to_search_image), Toast.LENGTH_LONG).show();
-                }
-
-                loading = false;
-            }
-        });
     }
 
     private void showProgressBar(boolean show) {

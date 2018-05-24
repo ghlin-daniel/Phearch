@@ -50,10 +50,11 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.onImageCellClickListener = onImageCellClickListener;
     }
 
-    public void add(List<ImageInfoResponse> moreImageInfo) {
-        int originalLength = listImageInfo.size();
-        listImageInfo.addAll(moreImageInfo);
-        notifyItemRangeInserted(originalLength, moreImageInfo.size());
+    public void update(List<ImageInfoResponse> newPhotos) {
+    	int size = listImageInfo.size();
+	    listImageInfo.clear();
+	    listImageInfo.addAll(newPhotos);
+	    notifyItemRangeInserted(size, newPhotos.size() - size);
     }
 
     public void clear() {

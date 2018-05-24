@@ -35,8 +35,6 @@ public class ImageInfoResponse {
     private String user;
     private String userImageURL;
 
-    private QueryRequest request;
-
     public ImageInfoResponse() {}
 
     public int getId() {
@@ -117,13 +115,5 @@ public class ImageInfoResponse {
 
     public String getUserImageURL() {
         return userImageURL;
-    }
-
-    public QueryRequest getRequest() {
-        return request;
-    }
-
-    public void setRequest(QueryRequest request) {
-        this.request = request;
     }
 }
