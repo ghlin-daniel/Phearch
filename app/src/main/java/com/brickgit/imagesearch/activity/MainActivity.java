@@ -1,11 +1,9 @@
 package com.brickgit.imagesearch.activity;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -15,14 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
+
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.adapter.ImageAdapter;
 import com.brickgit.imagesearch.adapter.SpaceItemDecoration;
-import com.brickgit.imagesearch.model.ImageInfoResponse;
 import com.brickgit.imagesearch.model.MediaViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,14 +37,10 @@ public class MainActivity extends AppCompatActivity {
     private StaggeredGridLayoutManager layoutManager;
     private ImageAdapter adapter;
 
-    private final ImageAdapter.OnImageCellClickListener onImageCellClickListener =
-            new ImageAdapter.OnImageCellClickListener() {
-                @Override
-                public void onImageCellClicked(ImageInfoResponse imageInfo) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageInfo.getPageURL()));
-                    startActivity(intent);
-                }
-            };
+    private final ImageAdapter.OnImageCellClickListener onImageCellClickListener = imageInfo -> {
+    	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageInfo.getPageURL()));
+    	startActivity(intent);
+    };
 
     private final SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
@@ -107,12 +98,9 @@ public class MainActivity extends AppCompatActivity {
         listView.addOnScrollListener(onScrollListener);
 
 	    mViewModel = ViewModelProviders.of(this).get(MediaViewModel.class);
-	    mViewModel.getPhotos().observe(this, new Observer<List<ImageInfoResponse>>() {
-		    @Override
-		    public void onChanged(@Nullable List<ImageInfoResponse> imageInfoResponses) {
-			    showProgressBar(false);
-			    adapter.update(imageInfoResponses);
-		    }
+	    mViewModel.getPhotos().observe(this, imageInfoResponses -> {
+	    	showProgressBar(false);
+	    	adapter.update(imageInfoResponses);
 	    });
     }
 

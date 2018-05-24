@@ -30,7 +30,7 @@ public class MediaViewModel extends AndroidViewModel {
 	public LiveData<List<ImageInfoResponse>> getPhotos() {
 		if (mPhotos == null) {
 			mPhotos = new MutableLiveData<>();
-			mPhotos.setValue(new LinkedList<ImageInfoResponse>());
+			mPhotos.setValue(new LinkedList<>());
 		}
 
 		return mPhotos;
