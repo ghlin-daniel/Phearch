@@ -3,11 +3,11 @@ package com.brickgit.imagesearch.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.brickgit.imagesearch.R;
 import com.brickgit.imagesearch.model.ImageInfoResponse;
-import com.brickgit.imagesearch.util.ImageUtil;
+import com.facebook.drawee.view.SimpleDraweeView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -19,7 +19,7 @@ public class ImageListVIewHolder extends RecyclerView.ViewHolder {
     private Context context;
 
     @BindView(R.id.root) View rootView;
-    @BindView(R.id.image) ImageView imageView;
+    @BindView(R.id.image) SimpleDraweeView imageView;
     @BindView(R.id.likes) TextView likes;
     @BindView(R.id.favorites) TextView favorites;
     @BindView(R.id.views) TextView views;
@@ -37,7 +37,7 @@ public class ImageListVIewHolder extends RecyclerView.ViewHolder {
 
         rootView.setTag(imageInfo);
 
-        ImageUtil.loadImage(context, imageView, imageInfo.getWebformatURL());
+	    imageView.setImageURI(imageInfo.getWebformatURL());
 
         likes.setText(imageInfo.getLikes().getCount());
         favorites.setText(imageInfo.getFavorites().getCount());
