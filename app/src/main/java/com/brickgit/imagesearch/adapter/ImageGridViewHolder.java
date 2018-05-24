@@ -1,7 +1,5 @@
 package com.brickgit.imagesearch.adapter;
 
-import android.content.Context;
-import android.support.percent.PercentRelativeLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -17,29 +15,16 @@ import butterknife.ButterKnife;
  */
 public class ImageGridViewHolder extends RecyclerView.ViewHolder {
 
-    private Context context;
-
     @BindView(R.id.root) View rootView;
     @BindView(R.id.image) SimpleDraweeView imageView;
 
-    public ImageGridViewHolder(Context context, View view) {
+    public ImageGridViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-
-        this.context = context;
     }
 
     public void bind(ImageInfoResponse imageInfo) {
-
         rootView.setTag(imageInfo);
-
-        float imageWidth = imageInfo.getPreviewWidth();
-        float imageHeight = imageInfo.getPreviewHeight();
-
-        PercentRelativeLayout.LayoutParams layoutParams = (PercentRelativeLayout.LayoutParams) imageView.getLayoutParams();
-        layoutParams.getPercentLayoutInfo().aspectRatio = imageWidth / imageHeight;
-        imageView.setLayoutParams(layoutParams);
-
         imageView.setImageURI(imageInfo.getPreviewURL());
     }
 }

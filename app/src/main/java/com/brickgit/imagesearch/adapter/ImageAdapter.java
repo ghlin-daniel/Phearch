@@ -75,16 +75,14 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 		            .from(parent.getContext())
 		            .inflate(R.layout.image_grid_view_holder, null);
             view.setOnClickListener(onClickListener);
-            ImageGridViewHolder viewHolder = new ImageGridViewHolder(parent.getContext(), view);
-            return viewHolder;
+            return new ImageGridViewHolder(view);
         }
         else {
             View view = LayoutInflater
 		            .from(parent.getContext())
 		            .inflate(R.layout.image_list_view_holder, null);
             view.setOnClickListener(onClickListener);
-            ImageListVIewHolder viewHolder = new ImageListVIewHolder(parent.getContext(), view);
-            return viewHolder;
+            return new ImageListVIewHolder(view);
         }
     }
 
