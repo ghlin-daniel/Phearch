@@ -19,7 +19,7 @@ public class MediaViewModel extends AndroidViewModel {
 	private boolean mIsLoading = false;
 	private boolean mIsNoMore = false;
 
-	private String mQuery;
+	private MutableLiveData<String> mQuery;
 	private int mPage = 0;
 	private MutableLiveData<List<ImageInfoResponse>> mPhotos;
 
@@ -27,12 +27,18 @@ public class MediaViewModel extends AndroidViewModel {
 		super(app);
 	}
 
+	public LiveData<String> getQuery() {
+		if (mQuery == null) {
+			mQuery = new MutableLiveData<>();
+		}
+		return mQuery;
+	}
+
 	public LiveData<List<ImageInfoResponse>> getPhotos() {
 		if (mPhotos == null) {
 			mPhotos = new MutableLiveData<>();
 			mPhotos.setValue(new LinkedList<>());
 		}
-
 		return mPhotos;
 	}
 
@@ -42,7 +48,7 @@ public class MediaViewModel extends AndroidViewModel {
 		List<ImageInfoResponse> photos = mPhotos.getValue();
 		photos.clear();
 		mPhotos.setValue(photos);
-		mQuery = query;
+		mQuery.setValue(query);
 		mPage = 1;
 		query();
 	}
@@ -57,10 +63,12 @@ public class MediaViewModel extends AndroidViewModel {
 	private void query() {
 		mIsLoading = true;
 
-		QueryApi.searchImage(getApplication(), mQuery, mPage, new QueryApi.ApiCallback() {
+		final String query = mQuery.getValue();
+
+		QueryApi.searchImage(getApplication(), query, mPage, new QueryApi.ApiCallback() {
 			@Override
-			public void onResponse(String query, QueryResponse response) {
-				if (!mQuery.equals(query)) return;
+			public void onResponse(String q, QueryResponse response) {
+				if (!query.equals(q)) return;
 
 				if (response.getHits().size() != 0) {
 					List<ImageInfoResponse> photos = mPhotos.getValue();
@@ -72,8 +80,8 @@ public class MediaViewModel extends AndroidViewModel {
 			}
 
 			@Override
-			public void onErrorResponse(String query, String error) {
-				if (!mQuery.equals(query)) return;
+			public void onErrorResponse(String q, String error) {
+				if (!query.equals(q)) return;
 				if (error.contains("out of valid range")) mIsNoMore = true;
 				mIsLoading = false;
 			}

@@ -7,9 +7,4 @@
         android:title="@string/title_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/switch_layout"
-        android:icon="@drawable/ic_action_list"
-        android:title="@string/title_switch_layout"
-        app:showAsAction="always" />
 </menu>
