@@ -13,24 +13,25 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.brickgit.imagesearch.R;
-import com.brickgit.imagesearch.adapter.ImageAdapter;
 import com.brickgit.imagesearch.adapter.SpaceItemDecoration;
+import com.brickgit.imagesearch.adapter.VideoAdapter;
 import com.brickgit.imagesearch.model.MediaViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ImageFragment extends Fragment {
+public class VideoFragment extends Fragment {
+
 
 	private MediaViewModel mViewModel;
 
-	@BindView(R.id.image_progress_bar) ProgressBar progressBar;
-	@BindView(R.id.image_list_view) RecyclerView listView;
+	@BindView(R.id.video_progress_bar) ProgressBar progressBar;
+	@BindView(R.id.video_list_view) RecyclerView listView;
 
 	private StaggeredGridLayoutManager layoutManager;
 
-	private final ImageAdapter.OnImageCellClickListener onImageCellClickListener = imageInfo -> {
-		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageInfo.pageURL));
+	private final VideoAdapter.OnVideoCellClickListener onVideoCellClickListener = videoInfo -> {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoInfo.pageURL));
 		startActivity(intent);
 	};
 
@@ -45,20 +46,20 @@ public class ImageFragment extends Fragment {
 			int firstVisibleItemPosition = firstVisibleItemPositions[firstVisibleItemPositions.length - 1];
 
 			if (firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
-				mViewModel.loadMorePhotos();
+				mViewModel.loadMoreVideos();
 			}
 		}
 	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_image, container, false);
+		View view = inflater.inflate(R.layout.fragment_video, container, false);
 		ButterKnife.bind(this, view);
 
 		layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 		listView.setLayoutManager(layoutManager);
-		ImageAdapter adapter = new ImageAdapter();
-		adapter.setOnImageCellClickListener(onImageCellClickListener);
+		VideoAdapter adapter = new VideoAdapter();
+		adapter.setOnVideoCellClickListener(onVideoCellClickListener);
 		listView.setAdapter(adapter);
 		listView.addItemDecoration(new SpaceItemDecoration());
 		listView.addOnScrollListener(onScrollListener);
@@ -68,7 +69,7 @@ public class ImageFragment extends Fragment {
 			showProgressBar(true);
 			adapter.clear();
 		});
-		mViewModel.getPhotos().observe(this, imageInfoResponses -> {
+		mViewModel.getVideos().observe(this, imageInfoResponses -> {
 			showProgressBar(false);
 			adapter.update(imageInfoResponses);
 		});

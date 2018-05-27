@@ -4,11 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/darker_gray"
     tools:context=".ui.MainActivity">
-    <fragment
-        android:name="com.brickgit.imagesearch.ui.ImageFragment"
-        android:id="@+id/image_fragment"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        app:tabTextColor="@android:color/darker_gray"
+        app:tabSelectedTextColor="@android:color/white"/>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_below="@id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

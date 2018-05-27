@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Daniel Lin on 7/2/16.
  */
-public class ImageListVIewHolder extends RecyclerView.ViewHolder {
+public class ImageViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.root) View rootView;
     @BindView(R.id.image) SimpleDraweeView imageView;
@@ -24,18 +24,18 @@ public class ImageListVIewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.downloads) TextView downloads;
     @BindView(R.id.comments) TextView comments;
 
-    public ImageListVIewHolder(View view) {
+    public ImageViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
     }
 
     public void bind(ImageInfoResponse imageInfo) {
         rootView.setTag(imageInfo);
-	    imageView.setImageURI(imageInfo.getWebformatURL());
-        likes.setText(imageInfo.getLikes().getCount());
-        favorites.setText(imageInfo.getFavorites().getCount());
-        views.setText(imageInfo.getViews().getCount());
-        downloads.setText(imageInfo.getDownloads().getCount());
-        comments.setText(imageInfo.getComments().getCount());
+	    imageView.setImageURI(imageInfo.webformatURL);
+        likes.setText(imageInfo.likes.getCount());
+        favorites.setText(imageInfo.favorites.getCount());
+        views.setText(imageInfo.views.getCount());
+        downloads.setText(imageInfo.downloads.getCount());
+        comments.setText(imageInfo.comments.getCount());
     }
 }

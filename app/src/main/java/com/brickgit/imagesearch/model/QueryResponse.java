@@ -5,11 +5,11 @@ import java.util.List;
 /**
  * Created by Daniel Lin on 6/30/16.
  */
-public class QueryResponse {
+public class QueryResponse<T> {
 
     private int total;
     private int totalHits;
-    private List<ImageInfoResponse> hits;
+    private List<T> hits;
 
     public QueryResponse() {}
 
@@ -21,7 +21,7 @@ public class QueryResponse {
         return totalHits;
     }
 
-    public List<ImageInfoResponse> getHits() {
+    public List<T> getHits() {
         return hits;
     }
 }

@@ -20,8 +20,6 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onImageCellClicked(ImageInfoResponse imageInfo);
     }
 
-    private RecyclerView recyclerView;
-
     private List<ImageInfoResponse> listImageInfo = new ArrayList<>();
 
     private OnImageCellClickListener onImageCellClickListener;
@@ -58,16 +56,16 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 	    View view = LayoutInflater
 			    .from(parent.getContext())
-			    .inflate(R.layout.image_list_view_holder, null);
+			    .inflate(R.layout.image_view_holder, null);
 	    view.setOnClickListener(onClickListener);
-	    return new ImageListVIewHolder(view);
+	    return new ImageViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ImageInfoResponse imageInfo = listImageInfo.get(position);
-	    ImageListVIewHolder gridViewHolder = (ImageListVIewHolder) holder;
-	    gridViewHolder.bind(imageInfo);
+	    ImageViewHolder viewHolder = (ImageViewHolder) holder;
+	    viewHolder.bind(imageInfo);
     }
 
     @Override

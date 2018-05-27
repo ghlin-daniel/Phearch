@@ -16,12 +16,16 @@ import java.util.List;
  */
 public class MediaViewModel extends AndroidViewModel {
 
-	private boolean mIsLoading = false;
-	private boolean mIsNoMore = false;
+	private boolean mIsPhotosLoading = false;
+	private boolean mIsNoMorePhotos = false;
+	private boolean mIsVideosLoading = false;
+	private boolean mIsNoMoreVideos = false;
 
 	private MutableLiveData<String> mQuery;
-	private int mPage = 0;
+	private int mPagePhotos = 0;
+	private int mPageVideos = 0;
 	private MutableLiveData<List<ImageInfoResponse>> mPhotos;
+	private MutableLiveData<List<VideoInfoResponse>> mVideos;
 
 	public MediaViewModel(@NonNull Application app) {
 		super(app);
@@ -42,48 +46,96 @@ public class MediaViewModel extends AndroidViewModel {
 		return mPhotos;
 	}
 
+	public LiveData<List<VideoInfoResponse>> getVideos() {
+		if (mVideos == null) {
+			mVideos = new MutableLiveData<>();
+			mVideos.setValue(new LinkedList<>());
+		}
+		return mVideos;
+	}
 
 	public void queryPhotos(String query) {
-		mIsNoMore = false;
+		mIsNoMorePhotos = false;
 		List<ImageInfoResponse> photos = mPhotos.getValue();
 		photos.clear();
 		mPhotos.setValue(photos);
 		mQuery.setValue(query);
-		mPage = 1;
-		query();
+		mPagePhotos = 1;
+		queryPhotos();
 	}
 
 	public void loadMorePhotos() {
-		if (mIsLoading) return;
-		if (mIsNoMore) return;
-		mPage++;
-		query();
+		if (mIsPhotosLoading) return;
+		if (mIsNoMorePhotos) return;
+		mPagePhotos++;
+		queryPhotos();
 	}
 
-	private void query() {
-		mIsLoading = true;
+	private void queryPhotos() {
+		mIsPhotosLoading = true;
 
 		final String query = mQuery.getValue();
 
-		QueryApi.searchImage(getApplication(), query, mPage, new QueryApi.ApiCallback() {
+		QueryApi.searchImage(getApplication(), query, mPagePhotos, new QueryApi.ApiCallback<ImageInfoResponse>() {
 			@Override
-			public void onResponse(String q, QueryResponse response) {
+			public void onResponse(String q, QueryResponse<ImageInfoResponse> response) {
 				if (!query.equals(q)) return;
 
-				if (response.getHits().size() != 0) {
-					List<ImageInfoResponse> photos = mPhotos.getValue();
-					photos.addAll(response.getHits());
-					mPhotos.setValue(photos);
-				}
+				List<ImageInfoResponse> photos = mPhotos.getValue();
+				photos.addAll(response.getHits());
+				mPhotos.setValue(photos);
 
-				mIsLoading = false;
+				mIsPhotosLoading = false;
 			}
 
 			@Override
 			public void onErrorResponse(String q, String error) {
 				if (!query.equals(q)) return;
-				if (error.contains("out of valid range")) mIsNoMore = true;
-				mIsLoading = false;
+				if (error.contains("out of valid range")) mIsNoMorePhotos = true;
+				mIsPhotosLoading = false;
+			}
+		});
+	}
+
+	public void queryVideos(String query) {
+		mIsNoMoreVideos = false;
+		List<VideoInfoResponse> videos = mVideos.getValue();
+		videos.clear();
+		mVideos.setValue(videos);
+		mQuery.setValue(query);
+		mPageVideos = 1;
+		queryVideos();
+	}
+
+	public void loadMoreVideos() {
+		if (mIsVideosLoading) return;
+		if (mIsNoMoreVideos) return;
+		mPageVideos++;
+		queryVideos();
+	}
+
+	private void queryVideos() {
+		mIsVideosLoading = true;
+
+		final String query = mQuery.getValue();
+
+		QueryApi.searchVideo(getApplication(), query, mPageVideos, new QueryApi.ApiCallback<VideoInfoResponse>() {
+			@Override
+			public void onResponse(String q, QueryResponse<VideoInfoResponse> response) {
+				if (!query.equals(q)) return;
+
+				List<VideoInfoResponse> videos = mVideos.getValue();
+				videos.addAll(response.getHits());
+				mVideos.setValue(videos);
+
+				mIsVideosLoading = false;
+			}
+
+			@Override
+			public void onErrorResponse(String q, String error) {
+				if (!query.equals(q)) return;
+				if (error.contains("out of valid range")) mIsNoMoreVideos = true;
+				mIsVideosLoading = false;
 			}
 		});
 	}
