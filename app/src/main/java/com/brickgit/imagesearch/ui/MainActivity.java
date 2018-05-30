@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
+	@BindView(R.id.toolbar) Toolbar toolbar;
 	@BindView(R.id.tabs) TabLayout tabLayout;
 	@BindView(R.id.view_pager) ViewPager viewPager;
 
@@ -59,14 +61,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 	    ButterKnife.bind(this);
 
+	    setSupportActionBar(toolbar);
 	    ActionBar actionBar = getSupportActionBar();
-	    actionBar.setLogo(R.drawable.ic_logo);
-	    actionBar.setDisplayUseLogoEnabled(true);
-	    actionBar.setDisplayShowHomeEnabled(true);
-	    actionBar.setDisplayShowTitleEnabled(false);
+	    if (actionBar != null) {
+	    	actionBar.setLogo(R.drawable.ic_logo);
+		    actionBar.setDisplayUseLogoEnabled(true);
+		    actionBar.setDisplayShowHomeEnabled(true);
+		    actionBar.setDisplayShowTitleEnabled(false);
+	    }
 
 	    initViewPager(viewPager);
 	    tabLayout.setupWithViewPager(viewPager);
+	    initTabIcons(tabLayout);
 
 	    mViewModel = ViewModelProviders.of(this).get(MediaViewModel.class);
 	    mViewModel.getPhotos();
@@ -81,17 +87,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void initTabIcons(TabLayout tabLayout) {
+    	tabLayout.getTabAt(0).setIcon(R.drawable.ic_tab_photo);
+    	tabLayout.getTabAt(1).setIcon(R.drawable.ic_tab_video);
+    }
+
     private void initViewPager(ViewPager viewPager) {
 	    MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
-	    adapter.addFragment(new ImageFragment(), "IMAGE");
-	    adapter.addFragment(new VideoFragment(), "VIDEO");
+	    adapter.addFragment(new ImageFragment());
+	    adapter.addFragment(new VideoFragment());
 	    viewPager.setAdapter(adapter);
 	}
 
 	private class MainPagerAdapter extends FragmentPagerAdapter {
 
 		private final List<Fragment> fragments = new ArrayList<>();
-		private final List<String> titles = new ArrayList<>();
 
 		public MainPagerAdapter(FragmentManager manager) {
 			super(manager);
@@ -107,14 +117,13 @@ public class MainActivity extends AppCompatActivity {
 			return fragments.size();
 		}
 
-		public void addFragment(Fragment fragment, String title) {
+		public void addFragment(Fragment fragment) {
 			fragments.add(fragment);
-			titles.add(title);
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			return titles.get(position);
+			return null;
 		}
 	}
 }
