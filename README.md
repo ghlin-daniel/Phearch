@@ -1,4 +1,4 @@
 # Phearch
 Demo
 ----
-<img src="demo/demo.png" width="200" />
+<img src="demo/demo.png" width="600" />
