@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.widget.RecyclerView
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/video_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
     <ProgressBar
         android:id="@+id/video_progress_bar"
         style="?android:attr/progressBarStyleLarge"
@@ -14,5 +15,5 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 </RelativeLayout>
