@@ -15,7 +15,6 @@ import com.guanhaolin.pearch.adapter.ImageAdapter.OnImageCellClickListener
 import com.guanhaolin.pearch.adapter.SpaceItemDecoration
 import com.guanhaolin.pearch.databinding.FragmentImageBinding
 import com.guanhaolin.pearch.model.ImageInfoResponse
-import com.guanhaolin.pearch.model.MediaViewModel
 
 class ImageFragment : Fragment() {
 

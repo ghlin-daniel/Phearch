@@ -16,7 +16,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.guanhaolin.pearch.R;
-import com.guanhaolin.pearch.model.MediaViewModel;
 
 public class MainActivity extends AppCompatActivity {
 

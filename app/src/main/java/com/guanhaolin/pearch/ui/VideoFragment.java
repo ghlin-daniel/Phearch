@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.guanhaolin.pearch.R;
 import com.guanhaolin.pearch.adapter.SpaceItemDecoration;
 import com.guanhaolin.pearch.adapter.VideoAdapter;
-import com.guanhaolin.pearch.model.MediaViewModel;
 
 public class VideoFragment extends Fragment {
 
