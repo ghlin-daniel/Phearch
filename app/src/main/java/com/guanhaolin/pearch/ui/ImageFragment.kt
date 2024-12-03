@@ -90,6 +90,6 @@ class ImageFragment : Fragment() {
     }
 
     private fun showProgressBar(show: Boolean) {
-        binding.imageProgressBar.visibility = if (show) View.VISIBLE else View.INVISIBLE
+        binding.imageProgressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 }

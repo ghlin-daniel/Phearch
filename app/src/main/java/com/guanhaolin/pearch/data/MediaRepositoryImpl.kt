@@ -19,4 +19,13 @@ class MediaRepositoryImpl(
         )
         emit(response.hits)
     }.flowOn(dispatcher)
+
+    override suspend fun searchVideos(query: String, page: Int) = flow {
+        val response = pixabayService.searchVideos(
+            BuildConfig.PHEARCH_PIXABAY_API_KEY,
+            query.replace(' ', '+'),
+            page
+        )
+        emit(response.hits)
+    }.flowOn(dispatcher)
 }

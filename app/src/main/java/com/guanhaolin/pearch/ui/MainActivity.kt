@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
 
     private lateinit var searchView: SearchView
-    private val mViewModel: MediaViewModel by viewModel()
+    private val viewModel: MediaViewModel by viewModel()
 
     private val onQueryTextListener: SearchView.OnQueryTextListener =
         object : SearchView.OnQueryTextListener {
@@ -33,9 +33,7 @@ class MainActivity : AppCompatActivity() {
                     return true
                 }
 
-                mViewModel.queryPhotos(formattedQuery)
-
-                //          mViewModel.queryVideos(query);
+                viewModel.query(formattedQuery)
                 searchView.setQuery("", false)
                 searchView.isIconified = true
                 return true

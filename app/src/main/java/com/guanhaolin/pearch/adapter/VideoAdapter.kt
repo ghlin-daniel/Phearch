@@ -4,26 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.guanhaolin.pearch.api.model.VideoResponse
 import com.guanhaolin.pearch.databinding.VideoViewHolderBinding
-import com.guanhaolin.pearch.model.VideoInfoResponse
 
 class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     interface OnVideoCellClickListener {
-        fun onVideoCellClicked(videoInfo: VideoInfoResponse?)
+        fun onVideoCellClicked(video: VideoResponse)
     }
 
-    private val listVideoInfo: MutableList<VideoInfoResponse> = ArrayList()
+    private val videos: MutableList<VideoResponse> = ArrayList()
 
     private var onVideoCellClickListener: OnVideoCellClickListener? = null
 
     private val onClickListener =
         View.OnClickListener { view ->
-            if (onVideoCellClickListener != null) {
-                val videoInfo = view.tag as VideoInfoResponse
-                if (videoInfo != null) {
-                    onVideoCellClickListener!!.onVideoCellClicked(videoInfo)
-                }
-            }
+            val video = view.tag as VideoResponse
+            onVideoCellClickListener?.onVideoCellClicked(video)
         }
 
     fun setOnVideoCellClickListener(
@@ -32,15 +28,14 @@ class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.onVideoCellClickListener = onVideoCellClickListener
     }
 
-    fun update(newVideos: List<VideoInfoResponse>) {
-        val size = listVideoInfo.size
-        listVideoInfo.clear()
-        listVideoInfo.addAll(newVideos)
-        notifyItemRangeInserted(size, newVideos.size - size)
+    fun update(newVideos: List<VideoResponse>) {
+        videos.clear()
+        videos.addAll(newVideos)
+        notifyDataSetChanged()
     }
 
     fun clear() {
-        listVideoInfo.clear()
+        videos.clear()
         notifyDataSetChanged()
     }
 
@@ -52,12 +47,12 @@ class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val videoInfo = listVideoInfo[position]
+        val video = videos[position]
         val viewHolder = holder as VideoViewHolder
-        viewHolder.bind(videoInfo)
+        viewHolder.bind(video)
     }
 
     override fun getItemCount(): Int {
-        return listVideoInfo.size
+        return videos.size
     }
 }

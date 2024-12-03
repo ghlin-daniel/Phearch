@@ -6,30 +6,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.guanhaolin.pearch.R
 import com.guanhaolin.pearch.adapter.SpaceItemDecoration
 import com.guanhaolin.pearch.adapter.VideoAdapter
 import com.guanhaolin.pearch.adapter.VideoAdapter.OnVideoCellClickListener
-import com.guanhaolin.pearch.model.VideoInfoResponse
+import com.guanhaolin.pearch.api.model.VideoResponse
+import com.guanhaolin.pearch.databinding.FragmentVideoBinding
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class VideoFragment : Fragment() {
-    private var mViewModel: MediaViewModel? = null
 
-    var progressBar: ProgressBar? = null
+    private var _binding: FragmentVideoBinding? = null
+    private val binding get() = _binding!!
 
-    var listView: RecyclerView? = null
+    private val viewModel: MediaViewModel by activityViewModel()
 
-    private var layoutManager: StaggeredGridLayoutManager? = null
+    private lateinit var layoutManager: StaggeredGridLayoutManager
+    private lateinit var adapter: VideoAdapter
 
     private val onVideoCellClickListener =
-        OnVideoCellClickListener { videoInfo: VideoInfoResponse ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoInfo.pageURL))
-            startActivity(intent)
+        object : OnVideoCellClickListener {
+            override fun onVideoCellClicked(video: VideoResponse) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(video.pageURL))
+                startActivity(intent)
+            }
         }
 
     private val onScrollListener: RecyclerView.OnScrollListener =
@@ -37,59 +39,57 @@ class VideoFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val totalItemCount = layoutManager!!.itemCount
-                val visibleItemCount = layoutManager!!.childCount
-                val firstVisibleItemPositions = layoutManager!!.findFirstVisibleItemPositions(null)
+                val totalItemCount = layoutManager.itemCount
+                val visibleItemCount = layoutManager.childCount
+                val firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null)
                 val firstVisibleItemPosition =
                     firstVisibleItemPositions[firstVisibleItemPositions.size - 1]
 
                 if (firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
-//            mViewModel.loadMoreVideos();
+                    viewModel.loadMoreVideos();
                 }
             }
         }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_video, container, false)
+    ): View {
+        _binding = FragmentVideoBinding.inflate(inflater, container, false).apply {
+            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+            videoListView.setLayoutManager(layoutManager)
+            adapter = VideoAdapter()
+            adapter.setOnVideoCellClickListener(onVideoCellClickListener)
+            videoListView.setAdapter(adapter)
+            videoListView.addItemDecoration(SpaceItemDecoration())
+            videoListView.addOnScrollListener(onScrollListener)
+        }
 
-        listView = view.findViewById(R.id.video_list_view)
-        progressBar = view.findViewById(R.id.video_progress_bar)
-
-        layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        listView.setLayoutManager(layoutManager)
-        val adapter = VideoAdapter()
-        adapter.setOnVideoCellClickListener(onVideoCellClickListener)
-        listView.setAdapter(adapter)
-        listView.addItemDecoration(SpaceItemDecoration())
-        listView.addOnScrollListener(onScrollListener)
-
-        mViewModel = ViewModelProviders.of(activity!!).get(
-            MediaViewModel::class.java
-        )
-        mViewModel!!
+        viewModel
             .query
             .observe(
                 viewLifecycleOwner
-            ) { query: String? ->
+            ) { _: String? ->
                 showProgressBar(true)
                 adapter.clear()
             }
-        mViewModel!!
+        viewModel
             .videos
             .observe(
                 viewLifecycleOwner
-            ) { imageInfoResponses: List<VideoInfoResponse?>? ->
+            ) {
                 showProgressBar(false)
-                adapter.update(imageInfoResponses)
+                adapter.update(it)
             }
 
-        return view
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun showProgressBar(show: Boolean) {
-        progressBar!!.visibility =
-            if (show) View.VISIBLE else View.INVISIBLE
+        binding.videoProgressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 }
