@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.guanhaolin.pearch.api.model.ImageResponse;
 import com.guanhaolin.pearch.databinding.ImageViewHolderBinding;
-import com.guanhaolin.pearch.model.ImageInfoResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +15,10 @@ public class ImageAdapter
         androidx.recyclerview.widget.RecyclerView.ViewHolder> {
 
   public interface OnImageCellClickListener {
-    void onImageCellClicked(ImageInfoResponse imageInfo);
+    void onImageCellClicked(ImageResponse image);
   }
 
-  private final List<ImageInfoResponse> listImageInfo = new ArrayList<>();
+  private final List<ImageResponse> images = new ArrayList<>();
 
   private OnImageCellClickListener onImageCellClickListener;
 
@@ -27,9 +27,9 @@ public class ImageAdapter
         @Override
         public void onClick(View view) {
           if (onImageCellClickListener != null) {
-            ImageInfoResponse imageInfo = (ImageInfoResponse) view.getTag();
-            if (imageInfo != null) {
-              onImageCellClickListener.onImageCellClicked(imageInfo);
+            ImageResponse image = (ImageResponse) view.getTag();
+            if (image != null) {
+              onImageCellClickListener.onImageCellClicked(image);
             }
           }
         }
@@ -39,15 +39,14 @@ public class ImageAdapter
     this.onImageCellClickListener = onImageCellClickListener;
   }
 
-  public void update(List<ImageInfoResponse> newPhotos) {
-    int size = listImageInfo.size();
-    listImageInfo.clear();
-    listImageInfo.addAll(newPhotos);
-    notifyItemRangeInserted(size, newPhotos.size() - size);
+  public void update(List<ImageResponse> newPhotos) {
+    images.clear();
+    images.addAll(newPhotos);
+    notifyDataSetChanged();
   }
 
   public void clear() {
-    listImageInfo.clear();
+    images.clear();
     notifyDataSetChanged();
   }
 
@@ -62,13 +61,13 @@ public class ImageAdapter
 
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-    ImageInfoResponse imageInfo = listImageInfo.get(position);
+    ImageResponse image = images.get(position);
     ImageViewHolder viewHolder = (ImageViewHolder) holder;
-    viewHolder.bind(imageInfo);
+    viewHolder.bind(image);
   }
 
   @Override
   public int getItemCount() {
-    return listImageInfo.size();
+    return images.size();
   }
 }

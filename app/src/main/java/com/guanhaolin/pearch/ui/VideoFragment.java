@@ -45,7 +45,7 @@ public class VideoFragment extends Fragment {
               firstVisibleItemPositions[firstVisibleItemPositions.length - 1];
 
           if (firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
-            mViewModel.loadMoreVideos();
+//            mViewModel.loadMoreVideos();
           }
         }
       };

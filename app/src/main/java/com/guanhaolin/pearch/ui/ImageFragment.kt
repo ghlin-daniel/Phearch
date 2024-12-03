@@ -7,28 +7,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.guanhaolin.pearch.adapter.ImageAdapter
 import com.guanhaolin.pearch.adapter.ImageAdapter.OnImageCellClickListener
 import com.guanhaolin.pearch.adapter.SpaceItemDecoration
+import com.guanhaolin.pearch.api.model.ImageResponse
 import com.guanhaolin.pearch.databinding.FragmentImageBinding
-import com.guanhaolin.pearch.model.ImageInfoResponse
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class ImageFragment : Fragment() {
 
     private var _binding: FragmentImageBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: MediaViewModel
+    private val viewModel: MediaViewModel by activityViewModel()
 
     private lateinit var layoutManager: StaggeredGridLayoutManager
     private lateinit var adapter: ImageAdapter
 
     private val onImageCellClickListener =
-        OnImageCellClickListener { imageInfo: ImageInfoResponse ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imageInfo.pageURL))
+        OnImageCellClickListener { image: ImageResponse ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(image.pageURL))
             startActivity(intent)
         }
 
@@ -62,7 +62,6 @@ class ImageFragment : Fragment() {
             imageListView.addOnScrollListener(onScrollListener)
         }
 
-        viewModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
         viewModel
             .query
             .observe(
@@ -75,9 +74,9 @@ class ImageFragment : Fragment() {
             .photos
             .observe(
                 viewLifecycleOwner
-            ) { imageInfoResponses: List<ImageInfoResponse?>? ->
+            ) {
                 showProgressBar(false)
-                adapter.update(imageInfoResponses)
+                adapter.update(it)
             }
 
         return binding.root
