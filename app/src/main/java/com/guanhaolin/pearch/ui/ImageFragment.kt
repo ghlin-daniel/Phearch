@@ -27,9 +27,11 @@ class ImageFragment : Fragment() {
     private lateinit var adapter: ImageAdapter
 
     private val onImageCellClickListener =
-        OnImageCellClickListener { image: ImageResponse ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(image.pageURL))
-            startActivity(intent)
+        object : OnImageCellClickListener {
+            override fun onImageCellClicked(image: ImageResponse) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(image.pageURL))
+                startActivity(intent)
+            }
         }
 
     private val onScrollListener: RecyclerView.OnScrollListener =
