@@ -7,10 +7,13 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import org.mockito.kotlin.any
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+@RunWith(JUnit4::class)
 class PixabayServiceTest {
     private lateinit var pixabayService: PixabayService
     private lateinit var mockWebServer: MockWebServer
