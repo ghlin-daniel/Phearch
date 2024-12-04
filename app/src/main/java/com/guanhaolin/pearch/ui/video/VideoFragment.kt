@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.guanhaolin.pearch.ui.util.SpaceItemDecoration
-import com.guanhaolin.pearch.ui.video.VideoAdapter.OnVideoCellClickListener
 import com.guanhaolin.pearch.api.model.VideoResponse
 import com.guanhaolin.pearch.databinding.FragmentVideoBinding
 import com.guanhaolin.pearch.ui.MediaViewModel
+import com.guanhaolin.pearch.ui.util.SpaceItemDecoration
+import com.guanhaolin.pearch.ui.video.VideoAdapter.OnVideoCellClickListener
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class VideoFragment : Fragment() {
@@ -65,20 +65,13 @@ class VideoFragment : Fragment() {
         }
 
         viewModel
-            .query
+            .uiState
             .observe(
                 viewLifecycleOwner
-            ) { _: String? ->
-                showProgressBar(true)
-                adapter.clear()
-            }
-        viewModel
-            .videos
-            .observe(
-                viewLifecycleOwner
-            ) {
-                showProgressBar(false)
-                adapter.update(it)
+            ) { uiState ->
+                val videos = uiState.videos
+                showProgressBar(videos.isLoading && videos.data.isEmpty())
+                adapter.update(videos.data)
             }
 
         return binding.root

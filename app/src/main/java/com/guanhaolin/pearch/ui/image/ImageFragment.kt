@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.guanhaolin.pearch.ui.image.ImageAdapter.OnImageCellClickListener
-import com.guanhaolin.pearch.ui.util.SpaceItemDecoration
 import com.guanhaolin.pearch.api.model.ImageResponse
 import com.guanhaolin.pearch.databinding.FragmentImageBinding
 import com.guanhaolin.pearch.ui.MediaViewModel
+import com.guanhaolin.pearch.ui.image.ImageAdapter.OnImageCellClickListener
+import com.guanhaolin.pearch.ui.util.SpaceItemDecoration
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class ImageFragment : Fragment() {
@@ -65,20 +65,13 @@ class ImageFragment : Fragment() {
         }
 
         viewModel
-            .query
+            .uiState
             .observe(
                 viewLifecycleOwner
-            ) { _: String? ->
-                showProgressBar(true)
-                adapter.clear()
-            }
-        viewModel
-            .photos
-            .observe(
-                viewLifecycleOwner
-            ) {
-                showProgressBar(false)
-                adapter.update(it)
+            ) { uiState ->
+                val images = uiState.images
+                showProgressBar(images.isLoading && images.data.isEmpty())
+                adapter.update(images.data)
             }
 
         return binding.root

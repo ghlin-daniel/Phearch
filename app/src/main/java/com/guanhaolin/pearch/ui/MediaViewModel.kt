@@ -3,7 +3,6 @@ package com.guanhaolin.pearch.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.guanhaolin.pearch.api.model.ImageResponse
 import com.guanhaolin.pearch.api.model.VideoResponse
@@ -19,37 +18,32 @@ class MediaViewModel(
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
-    val query: LiveData<String> = _query.asLiveData()
 
-    private var _isPhotosLoading = false
-    private var _isNoMorePhotos = false
-    private var _pagePhotos = 0
-    private val _photos = MutableLiveData<List<ImageResponse>>(listOf())
-    val photos: LiveData<List<ImageResponse>> = _photos
-
-    private var _isVideosLoading = false
-    private var _isNoMoreVideos = false
-    private var _pageVideos = 0
-    private val _videos = MutableLiveData<List<VideoResponse>>(listOf())
-    val videos: LiveData<List<VideoResponse>> = _videos
+    private val _uiState = MutableLiveData(MediaUiState())
+    val uiState: LiveData<MediaUiState> = _uiState
 
     init {
         viewModelScope.launch {
             _query.debounce(800)
                 .collectLatest {
-                    _isNoMorePhotos = false
-                    _isPhotosLoading = false
-                    _pagePhotos = 1
-                    _photos.value = listOf()
-
-                    _isNoMoreVideos = false
-                    _isVideosLoading = false
-                    _pageVideos = 1
-                    _videos.value = listOf()
+                    _uiState.value = MediaUiState(
+                        images = MediaUiModel(
+                            isLoading = false,
+                            hasMoreData = true,
+                            currentPage = 1,
+                            data = listOf()
+                        ),
+                        videos = MediaUiModel(
+                            isLoading = false,
+                            hasMoreData = true,
+                            currentPage = 1,
+                            data = listOf()
+                        )
+                    )
 
                     if (it.isNotEmpty()) {
-                        queryPhotos()
-                        queryVideos()
+                        queryPhotos(1)
+                        queryVideos(1)
                     }
                 }
         }
@@ -60,48 +54,82 @@ class MediaViewModel(
     }
 
     fun loadMorePhotos() {
-        if (_isPhotosLoading) return
-        if (_isNoMorePhotos) return
-        _pagePhotos++
-        queryPhotos()
+        _uiState.value!!.images.apply {
+            if (isLoading || !hasMoreData) return
+            queryPhotos(currentPage + 1)
+        }
     }
 
     fun loadMoreVideos() {
-        if (_isVideosLoading) return
-        if (_isNoMoreVideos) return
-        _pagePhotos++
-        queryVideos()
+        _uiState.value!!.videos.apply {
+            if (isLoading || !hasMoreData) return
+            queryVideos(currentPage + 1)
+        }
     }
 
-    private fun queryPhotos() {
-        _query.value?.let { currentQuery ->
-            viewModelScope.launch {
-                _isPhotosLoading = true
-                mediaRepository.searchImages(currentQuery, _pagePhotos).collect {
-                    if (currentQuery == _query.value) {
-                        val photos = _photos.value?.toMutableList() ?: mutableListOf()
-                        photos.addAll(it)
-                        _photos.postValue(photos)
-                    }
-                    _isPhotosLoading = false
+    private fun queryPhotos(nextPage: Int) {
+        viewModelScope.launch {
+            val photosUiState = _uiState.value!!.images
+            _uiState.value = _uiState.value?.copy(
+                images = photosUiState.copy(
+                    isLoading = true,
+                )
+            )
+            val currentQuery = _query.value
+            mediaRepository.searchImages(currentQuery, nextPage).collect {
+                val photos = photosUiState.data.toMutableList()
+                if (currentQuery == _query.value) {
+                    photos.addAll(it)
                 }
+                _uiState.value = _uiState.value!!.copy(
+                    images = photosUiState.copy(
+                        isLoading = false,
+                        hasMoreData = it.isNotEmpty(),
+                        currentPage = nextPage,
+                        data = photos
+                    )
+                )
+            }
+        }
+
+    }
+
+    private fun queryVideos(nextPage: Int) {
+        viewModelScope.launch {
+            val videosUiState = _uiState.value!!.videos
+            _uiState.value = _uiState.value?.copy(
+                videos = videosUiState.copy(
+                    isLoading = true,
+                )
+            )
+            val currentQuery = _query.value
+            mediaRepository.searchVideos(currentQuery, nextPage).collect {
+                val videos = videosUiState.data.toMutableList()
+                if (currentQuery == _query.value) {
+                    videos.addAll(it)
+                }
+                _uiState.value = _uiState.value!!.copy(
+                    videos = videosUiState.copy(
+                        isLoading = false,
+                        hasMoreData = it.isNotEmpty(),
+                        currentPage = nextPage,
+                        data = videos
+                    )
+                )
             }
         }
     }
 
-    private fun queryVideos() {
-        _query.value?.let { currentQuery ->
-            viewModelScope.launch {
-                _isVideosLoading = true
-                mediaRepository.searchVideos(currentQuery, _pageVideos).collect {
-                    if (currentQuery == _query.value) {
-                        val videos = _videos.value?.toMutableList() ?: mutableListOf()
-                        videos.addAll(it)
-                        _videos.postValue(videos)
-                    }
-                    _isVideosLoading = false
-                }
-            }
-        }
-    }
 }
+
+data class MediaUiModel<T>(
+    val isLoading: Boolean = false,
+    val hasMoreData: Boolean = true,
+    val currentPage: Int = 0,
+    val data: List<T> = listOf()
+)
+
+data class MediaUiState(
+    val images: MediaUiModel<ImageResponse> = MediaUiModel(),
+    val videos: MediaUiModel<VideoResponse> = MediaUiModel()
+)
