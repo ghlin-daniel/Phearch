@@ -71,7 +71,7 @@ class VideoFragment : Fragment() {
             ) { uiState ->
                 val videos = uiState.videos
                 showProgressBar(videos.isLoading && videos.data.isEmpty())
-                adapter.update(videos.data)
+                adapter.submitList(videos.data)
             }
 
         return binding.root

@@ -3,16 +3,15 @@ package com.guanhaolin.pearch.ui.video
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.guanhaolin.pearch.api.model.VideoResponse
 import com.guanhaolin.pearch.databinding.VideoViewHolderBinding
 
-class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class VideoAdapter : ListAdapter<VideoResponse, VideoViewHolder>(DIFF_CALLBACK) {
     interface OnVideoCellClickListener {
         fun onVideoCellClicked(video: VideoResponse)
     }
-
-    private val videos: MutableList<VideoResponse> = ArrayList()
 
     private var onVideoCellClickListener: OnVideoCellClickListener? = null
 
@@ -28,31 +27,25 @@ class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.onVideoCellClickListener = onVideoCellClickListener
     }
 
-    fun update(newVideos: List<VideoResponse>) {
-        videos.clear()
-        videos.addAll(newVideos)
-        notifyDataSetChanged()
-    }
-
-    fun clear() {
-        videos.clear()
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val viewBinding =
             VideoViewHolderBinding.inflate(LayoutInflater.from(parent.context))
         viewBinding.root.setOnClickListener(onClickListener)
         return VideoViewHolder(viewBinding)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val video = videos[position]
-        val viewHolder = holder as VideoViewHolder
-        viewHolder.bind(video)
+    override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
+}
 
-    override fun getItemCount(): Int {
-        return videos.size
-    }
+private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<VideoResponse>() {
+    override fun areItemsTheSame(oldItem: VideoResponse, newItem: VideoResponse) =
+        oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: VideoResponse, newItem: VideoResponse) =
+        oldItem.views == newItem.views
+                && oldItem.downloads == newItem.downloads
+                && oldItem.likes == newItem.likes
+                && oldItem.comments == newItem.comments
 }
