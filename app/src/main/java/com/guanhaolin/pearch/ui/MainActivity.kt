@@ -30,16 +30,18 @@ class MainActivity : AppCompatActivity() {
     private val onQueryTextListener: SearchView.OnQueryTextListener =
         object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                val formattedQuery = query.trim { it <= ' ' }
-                if (formattedQuery.isEmpty()) {
-                    searchView.setQuery("", false)
+                searchView.apply {
+                    setQuery("", false)
+                    isIconified = true
+                }
+
+                val formattedQuery = query.trim()
+                if (formattedQuery.isNotEmpty()) {
+                    viewModel.query(formattedQuery)
                     return true
                 }
 
-                viewModel.query(formattedQuery)
-                searchView.setQuery("", false)
-                searchView.isIconified = true
-                return true
+                return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
@@ -59,7 +61,8 @@ class MainActivity : AppCompatActivity() {
                 it.setDisplayShowHomeEnabled(true)
                 it.setDisplayShowTitleEnabled(false)
             }
-
+            
+            viewPager.adapter = MainPagerAdapter(this@MainActivity)
             TabLayoutMediator(tabs, viewPager) { tab: TabLayout.Tab, position: Int ->
                 if (position == 0) {
                     tab.setText(TAB_TITLE_PHOTO)
@@ -69,8 +72,6 @@ class MainActivity : AppCompatActivity() {
             }.attach()
             tabs.getTabAt(0)!!.setIcon(R.drawable.ic_tab_photo)
             tabs.getTabAt(1)!!.setIcon(R.drawable.ic_tab_video)
-
-            viewPager.adapter = MainPagerAdapter(this@MainActivity)
         }
     }
 
