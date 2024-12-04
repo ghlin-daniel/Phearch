@@ -1,4 +1,4 @@
-package com.guanhaolin.pearch.adapter
+package com.guanhaolin.pearch.ui.util
 
 import android.graphics.Rect
 import android.view.View

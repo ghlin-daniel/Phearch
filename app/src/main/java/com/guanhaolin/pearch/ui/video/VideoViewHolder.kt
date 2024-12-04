@@ -1,4 +1,4 @@
-package com.guanhaolin.pearch.adapter
+package com.guanhaolin.pearch.ui.video
 
 import androidx.recyclerview.widget.RecyclerView
 import com.guanhaolin.pearch.api.model.VideoResponse

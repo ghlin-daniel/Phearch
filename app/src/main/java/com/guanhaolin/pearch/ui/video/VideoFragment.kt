@@ -1,4 +1,4 @@
-package com.guanhaolin.pearch.ui
+package com.guanhaolin.pearch.ui.video
 
 import android.content.Intent
 import android.net.Uri
@@ -9,27 +9,27 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.guanhaolin.pearch.adapter.ImageAdapter
-import com.guanhaolin.pearch.adapter.ImageAdapter.OnImageCellClickListener
-import com.guanhaolin.pearch.adapter.SpaceItemDecoration
-import com.guanhaolin.pearch.api.model.ImageResponse
-import com.guanhaolin.pearch.databinding.FragmentImageBinding
+import com.guanhaolin.pearch.ui.util.SpaceItemDecoration
+import com.guanhaolin.pearch.ui.video.VideoAdapter.OnVideoCellClickListener
+import com.guanhaolin.pearch.api.model.VideoResponse
+import com.guanhaolin.pearch.databinding.FragmentVideoBinding
+import com.guanhaolin.pearch.ui.MediaViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
-class ImageFragment : Fragment() {
+class VideoFragment : Fragment() {
 
-    private var _binding: FragmentImageBinding? = null
+    private var _binding: FragmentVideoBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: MediaViewModel by activityViewModel()
 
     private lateinit var layoutManager: StaggeredGridLayoutManager
-    private lateinit var adapter: ImageAdapter
+    private lateinit var adapter: VideoAdapter
 
-    private val onImageCellClickListener =
-        object : OnImageCellClickListener {
-            override fun onImageCellClicked(image: ImageResponse) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(image.pageURL))
+    private val onVideoCellClickListener =
+        object : OnVideoCellClickListener {
+            override fun onVideoCellClicked(video: VideoResponse) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(video.pageURL))
                 startActivity(intent)
             }
         }
@@ -46,7 +46,7 @@ class ImageFragment : Fragment() {
                     firstVisibleItemPositions[firstVisibleItemPositions.size - 1]
 
                 if (firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
-                    viewModel.loadMorePhotos()
+                    viewModel.loadMoreVideos();
                 }
             }
         }
@@ -54,14 +54,14 @@ class ImageFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentImageBinding.inflate(inflater, container, false).apply {
+        _binding = FragmentVideoBinding.inflate(inflater, container, false).apply {
             layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-            imageListView.setLayoutManager(layoutManager)
-            adapter = ImageAdapter()
-            adapter.setOnImageCellClickListener(onImageCellClickListener)
-            imageListView.setAdapter(adapter)
-            imageListView.addItemDecoration(SpaceItemDecoration())
-            imageListView.addOnScrollListener(onScrollListener)
+            videoListView.setLayoutManager(layoutManager)
+            adapter = VideoAdapter()
+            adapter.setOnVideoCellClickListener(onVideoCellClickListener)
+            videoListView.setAdapter(adapter)
+            videoListView.addItemDecoration(SpaceItemDecoration())
+            videoListView.addOnScrollListener(onScrollListener)
         }
 
         viewModel
@@ -73,7 +73,7 @@ class ImageFragment : Fragment() {
                 adapter.clear()
             }
         viewModel
-            .photos
+            .videos
             .observe(
                 viewLifecycleOwner
             ) {
@@ -90,6 +90,6 @@ class ImageFragment : Fragment() {
     }
 
     private fun showProgressBar(show: Boolean) {
-        binding.imageProgressBar.visibility = if (show) View.VISIBLE else View.GONE
+        binding.videoProgressBar.visibility = if (show) View.VISIBLE else View.GONE
     }
 }

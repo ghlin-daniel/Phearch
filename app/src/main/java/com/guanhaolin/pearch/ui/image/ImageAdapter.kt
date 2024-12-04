@@ -1,4 +1,4 @@
-package com.guanhaolin.pearch.adapter
+package com.guanhaolin.pearch.ui.image
 
 import android.view.LayoutInflater
 import android.view.View
