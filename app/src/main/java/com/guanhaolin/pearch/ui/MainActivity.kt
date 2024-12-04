@@ -4,26 +4,27 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.guanhaolin.pearch.R
+import com.guanhaolin.pearch.databinding.ActivityMainBinding
 import com.guanhaolin.pearch.ui.image.ImageFragment
 import com.guanhaolin.pearch.ui.video.VideoFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var toolbar: Toolbar
 
-    private lateinit var tabLayout: TabLayout
-
-    private lateinit var viewPager: ViewPager2
+    companion object {
+        private const val TAB_TITLE_PHOTO = "Photo"
+        private const val TAB_TITLE_VIDEO = "Video"
+    }
 
     private lateinit var searchView: SearchView
+    private lateinit var viewBinding: ActivityMainBinding
+
     private val viewModel: MediaViewModel by viewModel()
 
     private val onQueryTextListener: SearchView.OnQueryTextListener =
@@ -48,34 +49,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        viewBinding = ActivityMainBinding.inflate(layoutInflater).apply {
+            setContentView(root)
 
-        toolbar = findViewById(R.id.toolbar)
-        tabLayout = findViewById(R.id.tabs)
-        viewPager = findViewById(R.id.view_pager)
-
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setLogo(R.drawable.ic_logo)
-            actionBar.setDisplayUseLogoEnabled(true)
-            actionBar.setDisplayShowHomeEnabled(true)
-            actionBar.setDisplayShowTitleEnabled(false)
-        }
-
-        initViewPager(viewPager)
-        TabLayoutMediator(
-            tabLayout,
-            viewPager
-        ) { tab: TabLayout.Tab, position: Int ->
-            if (position == 0) {
-                tab.setText("Photo")
-            } else {
-                tab.setText("Video")
+            setSupportActionBar(toolbar)
+            supportActionBar?.let {
+                it.setLogo(R.drawable.ic_logo)
+                it.setDisplayUseLogoEnabled(true)
+                it.setDisplayShowHomeEnabled(true)
+                it.setDisplayShowTitleEnabled(false)
             }
+
+            TabLayoutMediator(tabs, viewPager) { tab: TabLayout.Tab, position: Int ->
+                if (position == 0) {
+                    tab.setText(TAB_TITLE_PHOTO)
+                } else {
+                    tab.setText(TAB_TITLE_VIDEO)
+                }
+            }.attach()
+            tabs.getTabAt(0)!!.setIcon(R.drawable.ic_tab_photo)
+            tabs.getTabAt(1)!!.setIcon(R.drawable.ic_tab_video)
+
+            viewPager.adapter = MainPagerAdapter(this@MainActivity)
         }
-            .attach()
-        initTabIcons(tabLayout)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -85,29 +81,19 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(onQueryTextListener)
         return super.onCreateOptionsMenu(menu)
     }
+}
 
-    private fun initTabIcons(tabLayout: TabLayout) {
-        tabLayout.getTabAt(0)!!.setIcon(R.drawable.ic_tab_photo)
-        tabLayout.getTabAt(1)!!.setIcon(R.drawable.ic_tab_video)
+private class MainPagerAdapter(fragmentActivity: FragmentActivity) :
+    FragmentStateAdapter(fragmentActivity) {
+    override fun createFragment(position: Int): Fragment {
+        return if (position == 0) {
+            ImageFragment()
+        } else {
+            VideoFragment()
+        }
     }
 
-    private fun initViewPager(viewPager: ViewPager2) {
-        val adapter = MainPagerAdapter(this)
-        viewPager.adapter = adapter
-    }
-
-    private class MainPagerAdapter(fragmentActivity: FragmentActivity) :
-        FragmentStateAdapter(fragmentActivity) {
-        override fun createFragment(position: Int): Fragment {
-            return if (position == 0) {
-                ImageFragment()
-            } else {
-                VideoFragment()
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return 2
-        }
+    override fun getItemCount(): Int {
+        return 2
     }
 }
