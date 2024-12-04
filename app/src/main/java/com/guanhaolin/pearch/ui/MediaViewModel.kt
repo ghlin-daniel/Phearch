@@ -3,17 +3,23 @@ package com.guanhaolin.pearch.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.guanhaolin.pearch.api.model.ImageResponse
 import com.guanhaolin.pearch.api.model.VideoResponse
 import com.guanhaolin.pearch.data.MediaRepository
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class MediaViewModel(
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
-    private val _query = MutableLiveData("")
-    val query: LiveData<String> = _query
+    private val _query = MutableStateFlow("")
+    val query: LiveData<String> = _query.asLiveData()
 
     private var _isPhotosLoading = false
     private var _isNoMorePhotos = false
@@ -27,19 +33,30 @@ class MediaViewModel(
     private val _videos = MutableLiveData<List<VideoResponse>>(listOf())
     val videos: LiveData<List<VideoResponse>> = _videos
 
+    init {
+        viewModelScope.launch {
+            _query.debounce(800)
+                .collectLatest {
+                    _isNoMorePhotos = false
+                    _isPhotosLoading = false
+                    _pagePhotos = 1
+                    _photos.value = listOf()
+
+                    _isNoMoreVideos = false
+                    _isVideosLoading = false
+                    _pageVideos = 1
+                    _videos.value = listOf()
+
+                    if (it.isNotEmpty()) {
+                        queryPhotos()
+                        queryVideos()
+                    }
+                }
+        }
+    }
+
     fun query(query: String) {
         _query.value = query
-        _isNoMorePhotos = false
-        _isPhotosLoading = false
-        _pagePhotos = 1
-        _photos.value = listOf()
-        queryPhotos()
-
-        _isNoMoreVideos = false
-        _isVideosLoading = false
-        _pageVideos = 1
-        _videos.value = listOf()
-        queryVideos()
     }
 
     fun loadMorePhotos() {

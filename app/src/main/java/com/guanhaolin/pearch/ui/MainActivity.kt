@@ -30,22 +30,12 @@ class MainActivity : AppCompatActivity() {
     private val onQueryTextListener: SearchView.OnQueryTextListener =
         object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchView.apply {
-                    setQuery("", false)
-                    isIconified = true
-                }
-
-                val formattedQuery = query.trim()
-                if (formattedQuery.isNotEmpty()) {
-                    viewModel.query(formattedQuery)
-                    return true
-                }
-
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                return false
+                viewModel.query(newText.trim())
+                return true
             }
         }
 
@@ -61,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 it.setDisplayShowHomeEnabled(true)
                 it.setDisplayShowTitleEnabled(false)
             }
-            
+
             viewPager.adapter = MainPagerAdapter(this@MainActivity)
             TabLayoutMediator(tabs, viewPager) { tab: TabLayout.Tab, position: Int ->
                 if (position == 0) {
