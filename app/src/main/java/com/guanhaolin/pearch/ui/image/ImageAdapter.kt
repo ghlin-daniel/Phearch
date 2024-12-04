@@ -3,16 +3,15 @@ package com.guanhaolin.pearch.ui.image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.guanhaolin.pearch.api.model.ImageResponse
 import com.guanhaolin.pearch.databinding.ImageViewHolderBinding
 
-class ImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ImageAdapter : ListAdapter<ImageResponse, ImageViewHolder>(DIFF_CALLBACK) {
     interface OnImageCellClickListener {
         fun onImageCellClicked(image: ImageResponse)
     }
-
-    private val images: MutableList<ImageResponse> = ArrayList()
 
     private var onImageCellClickListener: OnImageCellClickListener? = null
 
@@ -26,31 +25,25 @@ class ImageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.onImageCellClickListener = onImageCellClickListener
     }
 
-    fun update(newPhotos: List<ImageResponse>) {
-        images.clear()
-        images.addAll(newPhotos)
-        notifyDataSetChanged()
-    }
-
-    fun clear() {
-        images.clear()
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val viewbinding =
             ImageViewHolderBinding.inflate(LayoutInflater.from(parent.context))
         viewbinding.root.setOnClickListener(onClickListener)
         return ImageViewHolder(viewbinding)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val image = images[position]
-        val viewHolder = holder as ImageViewHolder
-        viewHolder.bind(image)
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
+}
 
-    override fun getItemCount(): Int {
-        return images.size
-    }
+private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ImageResponse>() {
+    override fun areItemsTheSame(oldItem: ImageResponse, newItem: ImageResponse) =
+        oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: ImageResponse, newItem: ImageResponse) =
+        oldItem.views == newItem.views
+                && oldItem.downloads == newItem.downloads
+                && oldItem.likes == newItem.likes
+                && oldItem.comments == newItem.comments
 }

@@ -71,7 +71,7 @@ class ImageFragment : Fragment() {
             ) { uiState ->
                 val images = uiState.images
                 showProgressBar(images.isLoading && images.data.isEmpty())
-                adapter.update(images.data)
+                adapter.submitList(images.data)
             }
 
         return binding.root
